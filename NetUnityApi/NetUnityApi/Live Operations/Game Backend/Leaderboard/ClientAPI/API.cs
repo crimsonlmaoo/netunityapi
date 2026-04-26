@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace NetUnityApi.Live_Operations.Game_Backend.Leaderboard.ClientAPI
 {
+    //ai for the generation + summaries - didn't want to spend 2+ hours on a single api to move onto others
     // Models updated to match Unity Leaderboards v1 OpenAPI Spec
 
     /// <summary>Request body for submitting a new score.</summary>
