@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace NetUnityApi.Responses.Multiplayer.Lobby
@@ -21,6 +22,11 @@ namespace NetUnityApi.Responses.Multiplayer.Lobby
         [JsonPropertyName("version")] public int Version { get; set; }
         [JsonPropertyName("players")] public List<LobbyPlayer> Players { get; set; } = new List<LobbyPlayer>();
         [JsonPropertyName("data")] public Dictionary<string, LobbyDataObject> Data { get; set; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        }
     }
 
     public class LobbyPlayer
@@ -31,6 +37,11 @@ namespace NetUnityApi.Responses.Multiplayer.Lobby
         [JsonPropertyName("lastUpdated")] public DateTime LastUpdated { get; set; }
         [JsonPropertyName("profile")] public PlayerProfile Profile { get; set; }
         [JsonPropertyName("data")] public Dictionary<string, LobbyDataObject> Data { get; set; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        }
     }
 
     public class PlayerProfile
@@ -49,5 +60,9 @@ namespace NetUnityApi.Responses.Multiplayer.Lobby
     {
         [JsonPropertyName("results")] public List<LobbyResponse> Results { get; set; }
         [JsonPropertyName("continuationToken")] public string ContinuationToken { get; set; }
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        }
     }
 }

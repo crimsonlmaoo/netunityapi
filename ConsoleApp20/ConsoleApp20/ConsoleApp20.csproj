@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.55.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="NetUnityApi">
       <HintPath>..\..\NetUnityApi\NetUnityApi\bin\Debug\net10.0\NetUnityApi.dll</HintPath>
     </Reference>

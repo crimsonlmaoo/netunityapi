@@ -9,8 +9,6 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Notifications
 {
     public class API
     {
-        public static string APIURL = "https://social.services.api.unity.com/v1/notifications/auth";
-
         public static async Task<NotificationsResponse> GetNotificationAuthDetails(string token)
         {
             if (string.IsNullOrEmpty(token))
@@ -23,7 +21,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Notifications
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                HttpResponseMessage response = await client.GetAsync(APIURL);
+                HttpResponseMessage response = await client.GetAsync($"{Globals.BaseUrlSocial}/notifications/auth");
 
                 if (response.IsSuccessStatusCode)
                 {

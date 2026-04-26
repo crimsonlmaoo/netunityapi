@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
+using NetUnityApi;
 using System.Text;
 using System.Text.Json;
 
@@ -10,9 +11,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
 {
     public class API
     {
-
-        private static string APIURL = "https://social.services.api.unity.com/v1/relationships/";
-        public static async Task<List<RelationshipResponse>> RetrieveRelationshipList(string token)
+        public async Task<List<RelationshipResponse>> RetrieveRelationshipList(string token)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -26,7 +25,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
 
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(APIURL);
+                    HttpResponseMessage response = await client.GetAsync($"{Globals.BaseUrlSocial}/relationships");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -47,13 +46,13 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"exc: {ex.Message}");
+                    throw new Exception($"exc: {ex.Message}");
                 }
             }
 
             return null;
         }
-        public static async Task<RelationshipResponse> CreateRelationship(string token, string userId)
+        public async Task<RelationshipResponse> CreateRelationship(string token, string userId)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -76,15 +75,17 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
                 string jsonPayload = JsonSerializer.Serialize(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(APIURL, content);
+                HttpResponseMessage response = await client.PostAsync($"{Globals.BaseUrlSocial}/relationships", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Friend request sent");
+                    Console.WriteLine($"Friend request sent");
 
                     string jsonResponse = await response.Content.ReadAsStringAsync();
 
                     RelationshipResponse relationship = JsonSerializer.Deserialize<RelationshipResponse>(jsonResponse);
+
+                    Console.WriteLine($"Relationship id: {relationship.Id}");
 
                     return relationship;
                 }
@@ -97,7 +98,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
 
             return null;
         }
-        public static async Task DeleteRelationship(string token, string relationshipId)
+        public async Task DeleteRelationship(string token, string relationshipId)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -109,7 +110,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Relationships
             { 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                HttpResponseMessage response = await client.DeleteAsync(APIURL + relationshipId);
+                HttpResponseMessage response = await client.DeleteAsync($"{Globals.BaseUrlSocial}/relationships/{relationshipId}");
 
                 if (response.IsSuccessStatusCode)
                 {

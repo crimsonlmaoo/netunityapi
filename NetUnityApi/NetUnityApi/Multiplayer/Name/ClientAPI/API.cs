@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using NetUnityApi.Responses.Multiplayer.Name;
+using NetUnityApi;
 
 namespace NetUnityApi.Multiplayer.Name.ClientAPI
 {
@@ -14,7 +15,6 @@ namespace NetUnityApi.Multiplayer.Name.ClientAPI
     {
         // other scripts had the worst code so i decided to clean it up with some lambda functions and some intialization for if you wanted to spam join parties and such.
         private readonly HttpClient _client;
-        private const string BaseUrl = "https://social.services.api.unity.com/v1/names";
         private readonly JsonSerializerOptions _jsonOptions;
 
         public API(string bearerToken)
@@ -30,10 +30,10 @@ namespace NetUnityApi.Multiplayer.Name.ClientAPI
         }
 
         public async Task<NameResponse> GetName(string playerId) =>
-            await ProcessResponse<NameResponse>(await _client.GetAsync($"{BaseUrl}/{playerId}"));
+            await ProcessResponse<NameResponse>(await _client.GetAsync($"{Globals.BaseUrlSocial}/names/{playerId}"));
 
         public async Task<NameResponse> SetName(NameRequest request, string playerId) =>
-            await ProcessResponse<NameResponse>(await _client.PostAsync($"{BaseUrl}/{playerId}", CreateJsonContent(request)));
+            await ProcessResponse<NameResponse>(await _client.PostAsync($"{Globals.BaseUrlSocial}/names/{playerId}", CreateJsonContent(request)));
 
         private StringContent CreateJsonContent(object obj) =>
             new StringContent(JsonSerializer.Serialize(obj, _jsonOptions), Encoding.UTF8, "application/json");

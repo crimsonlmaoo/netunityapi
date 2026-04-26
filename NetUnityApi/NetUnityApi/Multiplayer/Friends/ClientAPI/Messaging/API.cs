@@ -9,7 +9,6 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Messaging
 {
     public class API
     {
-        private static string APIURL = "https://social.services.api.unity.com/v1/messaging/";
 
         public static async Task SendMessage(string token, string id, string msgPayload)
         {
@@ -35,7 +34,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Messaging
                 string jsonPayload = JsonSerializer.Serialize(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(APIURL, content);
+                HttpResponseMessage response = await client.PostAsync($"{Globals.BaseUrlSocial}/messaging/", content);
 
                 if (response.IsSuccessStatusCode)
                 {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Schema;
 
 namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Presence
 {
@@ -18,8 +19,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Presence
 
     public class API
     {
-        private static string APIURL = "https://social.services.api.unity.com/v1/presence";
-        public static async Task<PresenceResponse> GetPresence(string token)
+        public static async Task<PresenceResponse> GetPresence(string token, string uId)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -33,7 +33,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Presence
 
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync(APIURL);
+                    HttpResponseMessage response = await client.GetAsync($"{Globals.BaseUrlSocial}/presence/{uId}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -54,7 +54,7 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Presence
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"exc: {ex.Message}");
+                    throw new Exception($"Unable to get precense due to: {ex.Message}");
                 }
             }
 
@@ -81,24 +81,32 @@ namespace NetUnityApi.Multiplayer.Friends.ClientAPI.Presence
                 string jsonPayload = JsonSerializer.Serialize(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(APIURL, content);
-
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    Console.WriteLine("Presence set");
+                    HttpResponseMessage response = await client.PostAsync($"{Globals.BaseUrlSocial}/presence", content);
 
-                    string jsonResponse = await response.Content.ReadAsStringAsync();
-                    
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Presence set");
 
-                    PresenceResponse presence = JsonSerializer.Deserialize<PresenceResponse>(jsonResponse, options);
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
 
-                    return presence;
+                        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                        PresenceResponse presence = JsonSerializer.Deserialize<PresenceResponse>(jsonResponse, options);
+
+                        return presence;
+                    }
+                    else
+                    {
+                        string error = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Failed setting presence: {response.StatusCode} - {error}");
+
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string error = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Failed setting presence: {response.StatusCode} - {error}");
+                    throw new Exception($"Unable to set precense due to: {ex.Message}");
                 }
             }
 
